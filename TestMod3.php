@@ -96,11 +96,12 @@ function ValidateUnhandledInput(&$finiteAutomation, $input)
     $class = get_class($finiteAutomation);
     try {
         $finiteAutomation->Execute($input);
-
+        
         logMsg("[{$class}] Fail: Input [" . print_r($input, true) . "] does not lead UnexpectedValueException" );
     }
     catch (Throwable $e)
     {
+        $finiteAutomation->Reset();
         if ($e instanceof UnexpectedValueException)
         {
             logMsg("[{$class}] Success: Input [" . print_r($input, true) . "] leads to UnexpectedValueException");
@@ -112,36 +113,31 @@ function ValidateUnhandledInput(&$finiteAutomation, $input)
             return false;
         }
     }
+
 }
 
 function TestMod3_OutputValidation(&$mod3, &$totalCases, &$totalPass)
 {
 
     // Do some known input outputs defined in the requirements
-    $totalPass += (int) ValidateOutput($mod3, "1101", Mod3::STATE_S1);
+    $totalPass += (int) ValidateOutput($mod3, "1101", '1');
     $totalCases += 1;
 
-    $totalPass += (int) ValidateOutput($mod3, "1110", Mod3::STATE_S2);
+    $totalPass += (int) ValidateOutput($mod3, "1110", '2');
     $totalCases += 1;
 
-    $totalPass += (int) ValidateOutput($mod3, "1111", Mod3::STATE_S0);
+    $totalPass += (int) ValidateOutput($mod3, "1111", '0');
     $totalCases += 1;
 
 
     // Test values from 1 to 99999
-    $stateMap = [
-        0 => Mod3::STATE_S0,
-        1 => Mod3::STATE_S1,
-        2 => Mod3::STATE_S2
-    ];
 
     for ($i= 0; $i < 100; $i++)
     {
         $result = $i % 3;
-        $expectedState = $stateMap[$result];
         $binaryString = decbin($i);
 
-        $totalPass += (int) ValidateOutput($mod3, $binaryString, $expectedState);
+        $totalPass += (int) ValidateOutput($mod3, $binaryString, $result);
         $totalCases += 1;
     }
 }
@@ -151,18 +147,21 @@ function ValidateOutput(&$finiteAutomation, $input, $expectedValue)
     $class = get_class($finiteAutomation);
     try
     {
-        $finalState = $finiteAutomation->Execute($input, true);
-        if ($finalState != $expectedValue)
+        $finiteAutomation->Execute($input);
+        $output = $finiteAutomation->GetOutput();
+        $finiteAutomation->Reset();
+        if ($output != $expectedValue)
         {
-            logMsg("[{$class}] Fail: Input [" . print_r($input, true) . "] leads to unexpected state [{$finalState}]. Expected state: " . $expectedValue);
+            logMsg("[{$class}] Fail: Input [" . print_r($input, true) . "] leads to unexpected output [{$output}]. Expected output: " . $expectedValue);
             return false;
         }
 
-        logMsg("[{$class}] Success: Input [" . print_r($input, true) . "] leads to expected final state [{$finalState}]");
+        logMsg("[{$class}] Success: Input [" . print_r($input, true) . "] leads to expected output [{$output}]");
         return true;
     }
     catch(Throwable $e)
     {
+        $finiteAutomation->Reset();
         logMsg("[{$class}] Fail: Input [" . print_r($input, true) . "] leads to unhandled exception. [".$e->getMessage()."]");
         return false;
     }

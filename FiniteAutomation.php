@@ -3,13 +3,15 @@
 class FiniteAutomation
 {
 
-    protected const POSSIBLE_STATES = [];
-    protected const ALPHABET = '';
-    protected const INITIAL_STATE = '';
-    protected const TRANSITIONS = [];
-    protected const ACCEPTED_FINAL_STATES = [];
+    protected const POSSIBLE_STATES = [];   // All possible states for the finite state machine
+    protected const ALPHABET = '';  // Alphabet as a string for acceptable input
+    protected const INITIAL_STATE = ''; // State the FSM starts in 
+    protected const TRANSITIONS = [];   // A 2D array where the indexes are [startingState, input] => final state
+    protected const ACCEPTED_FINAL_STATES = []; // final states the FSM is allowed to end up in
 
-    protected $currentState;
+    protected const STATE_OUTPUTS = []; // an array that mapes State => output
+
+    protected $currentState; // This keeps track of the current state of the finite machine as it executes
 
     public function __construct()
     {
@@ -51,18 +53,30 @@ class FiniteAutomation
         $this->SetCurrentState($newState);
     }
 
+    // Private setter function
     private function SetCurrentState($state)
     {
         $this->currentState = $state;
     }
 
+    // Get current state
     public function GetCurrentState()
     {
         return $this->currentState;
     }
 
+    public function GetOutput()
+    {
+        $currentState = $this->GetCurrentState();
+        if (!isset(static::STATE_OUTPUTS[$currentState]))
+        {
+            throw new LogicException("No defined output for state: [$currentState]");
+        }
+        return static::STATE_OUTPUTS[$currentState];
+    }
+
     // Accepts a string and feeds it character by character one at a time
-    public function Execute($string, $resetAfter = false)
+    public function Execute($string)
     {
         if (!is_scalar($string))
         {
@@ -87,14 +101,10 @@ class FiniteAutomation
             throw new LogicException("Current state [{$currentState}] is not an accepted final state [".implode(",", static::ACCEPTED_FINAL_STATES)."]");
         }
 
-        if ($resetAfter)
-        {
-            $this->Reset();
-        }
-
         return $currentState;
     }
 
+    // Reset FSM to initial state
     public function Reset()
     {
         $this->currentState = static::INITIAL_STATE;

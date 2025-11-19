@@ -2,6 +2,8 @@
 
 require_once __DIR__ . "/FiniteAutomation.php";
 
+
+
 class BadMod3 extends FiniteAutomation
 {
     const STATE_S0 = 'S0';
@@ -17,5 +19,11 @@ class BadMod3 extends FiniteAutomation
         'S0' => ['0' => self::STATE_S0, '1' => self::STATE_S1],
         'S1' => ['0' => self::STATE_S0, '1' => self::STATE_S1],
         'S2' => ['0' => self::STATE_S1, '1' => self::STATE_S2]
+    );
+
+    protected const STATE_OUTPUTS = array(
+        self::STATE_S0 => '0',
+        self::STATE_S1 => '1',
+        self::STATE_S2 => '2'
     );
 }
