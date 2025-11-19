@@ -1,7 +1,13 @@
 This my implementation of the finite state machine assessment.
 
+- FiniteAutomation.php is the base class intended to be extended by other developers.
+- Mod3.php is an implementation of FiniteAutomation.php
+- BadMod3.php is an improper implementation of FinieAutomation.php
+- SampleMod3Code.php is some sample code to show how the Mod3/FiniteAutomation class works
+- TestMod3.php runs a bunch of test cases on both Mod3.php and BadMod3.php
+
 Design philosophy:
-The goal was to be very easy for other developers to use given similar configuration as in the rubric. Through just defining some class constants, a developer should have a working finite state machine and some methods that should just work. I left methods The code utilizes late static binding for this purpose. What I did not the grander vision for the library, whether a developer has a finite state machine they want to work with in depth, or the intent was to work with many many different types of finite state machines. I wrote this assuming they were to work with it in depth.
+The goal was to be very easy for other developers to use given similar configuration as in the rubric. Through just defining some class constants, a developer should have a working finite state machine and some methods that should just work. I left methods The code utilizes late static binding for this purpose. What I did not the grander vision for the library, whether a developer has a finite state machine they want to work with in depth, or the intent was to work with many many different types of finite state machines. I wrote this assuming they were to work with it in depth, making the base class very easy to extend and add methods onto it. 
 
 Assumptions I've made:
 - Code is accessible by other developers
